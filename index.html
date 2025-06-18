@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Kod Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f3f4f6;
+      --text-color: #111827;
+      --box-bg: #ffffff;
+      --border-color: #9ca3af;
+      --button-bg: #10b981;
+      --button-hover: #059669;
+      --download-bg: #3b82f6;
+      --download-hover: #2563eb;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1f2937;
+        --text-color: #f9fafb;
+        --box-bg: #374151;
+        --border-color: #6b7280;
+        --button-bg: #22c55e;
+        --button-hover: #16a34a;
+        --download-bg: #60a5fa;
+        --download-hover: #3b82f6;
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    p {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--box-bg);
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .download-btn {
+      background-color: var(--download-bg);
+    }
+
+    .download-btn:hover {
+      background-color: var(--download-hover);
+    }
+
+    #qrcode-wrapper {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    #qrcode {
+      width: 256px;
+      height: 256px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      background-color: var(--box-bg);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 50px;
+      }
+
+      input, button {
+        width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>QR Kod Generator</h1>
+  <p>Unesi URL ili tekst:</p>
+  <input id="tekst" type="text" placeholder="https://primjer.com" />
+
+  <div id="qrcode-wrapper">
+    <div id="qrcode"></div>
+    <button class="download-btn" onclick="preuzmiQR()">Preuzmi QR kao sliku</button>
+  </div>
+
+  <script>
+    const tekstInput = document.getElementById("tekst");
+    const qrcodeDiv = document.getElementById("qrcode");
+
+    tekstInput.addEventListener("input", () => {
+      const tekst = tekstInput.value.trim();
+      qrcodeDiv.innerHTML = "";
+      if (tekst !== "") {
+        new QRCode(qrcodeDiv, {
+          text: tekst,
+          width: 256,
+          height: 256,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    });
+
+    function preuzmiQR() {
+      const canvas = document.querySelector('#qrcode canvas');
+      if (!canvas) {
+        alert("Prvo unesi URL kako bi se generirao QR kod.");
+        return;
+      }
+
+      const dataURL = canvas.toDataURL("image/png");
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'qr_kod.png';
+      link.click();
+    }
+  </script>
+</body>
+</html>
