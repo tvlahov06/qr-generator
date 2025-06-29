@@ -131,41 +131,63 @@
 </head>
 <body>
   <h1>QR Kod Generator</h1>
-  <p>Unesi URL ili tekst:</p>
-  <input id="tekst" type="text" placeholder="https://primjer.com" />
-
+<p>Unesi URL ili tekst:</p>
+<input id="tekst" type="text" placeholder="https://primjer.com" />
   <div id="qrcode-wrapper">
     <div id="qrcode"></div>
-    <button class="download-btn" onclick="preuzmiQR()">Preuzmi QR kao sliku</button>
+    <button onclick="preuzmiQR()">Preuzmi QR kao sliku</button>
   </div>
 
   <script>
     const tekstInput = document.getElementById("tekst");
     const qrcodeDiv = document.getElementById("qrcode");
+    let downloadCanvas = null;
 
     tekstInput.addEventListener("input", () => {
       const tekst = tekstInput.value.trim();
       qrcodeDiv.innerHTML = "";
+      downloadCanvas = null;
+
       if (tekst !== "") {
-        new QRCode(qrcodeDiv, {
+        const hiddenDiv = document.createElement("div");
+        hiddenDiv.style.display = "none";
+        document.body.appendChild(hiddenDiv);
+        const qrBig = new QRCode(hiddenDiv, {
           text: tekst,
-          width: 256,
-          height: 256,
+          width: 1000,
+          height: 1000,
           colorDark: "#000000",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.H
         });
+
+        setTimeout(() => {
+          downloadCanvas = hiddenDiv.querySelector("canvas");
+
+          const previewCanvas = document.createElement("canvas");
+          previewCanvas.width = 256;
+          previewCanvas.height = 256;
+
+          const ctx = previewCanvas.getContext("2d");
+          const img = new Image();
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, 256, 256);
+          };
+          img.src = downloadCanvas.toDataURL("image/png");
+
+          qrcodeDiv.innerHTML = "";
+          qrcodeDiv.appendChild(previewCanvas);
+        }, 200);
       }
     });
 
     function preuzmiQR() {
-      const canvas = document.querySelector('#qrcode canvas');
-      if (!canvas) {
+      if (!downloadCanvas) {
         alert("Prvo unesi URL kako bi se generirao QR kod.");
         return;
       }
 
-      const dataURL = canvas.toDataURL("image/png");
+      const dataURL = downloadCanvas.toDataURL("image/png");
       const link = document.createElement('a');
       link.href = dataURL;
       link.download = 'qr_kod.png';
