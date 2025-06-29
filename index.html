@@ -126,7 +126,20 @@
       input, button {
         width: 300px;
       }
-    }
+     .download-btn {
+     background-color: #3b82f6;
+     color: white;
+     border: none;
+     padding: 12px 20px;
+     font-size: 16px;
+     border-radius: 8px;
+     cursor: pointer;
+}
+
+    .download-btn:hover {
+     background-color: #2563eb;
+}
+
   </style>
 </head>
 <body>
@@ -135,7 +148,7 @@
 <input id="tekst" type="text" placeholder="https://primjer.com" />
   <div id="qrcode-wrapper">
     <div id="qrcode"></div>
-    <button onclick="preuzmiQR()">Preuzmi QR kao sliku</button>
+    <button class="download-btn" onclick="preuzmiQR()">Preuzmi QR kao sliku</button>
   </div>
 
   <script>
